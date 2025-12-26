@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ashop 관리자</title>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    
+    <!-- Excel 라이브러리 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    
+    <!-- 모듈화된 스크립트 -->
+    <script src="firebase-config.js" defer></script>
+    <script src="auth-check.js" defer></script>
+    <script src="user-manager.js" defer></script>
+    <script src="excel-exporter.js" defer></script>
+    
+    <!-- 스타일시트 -->
+    <link rel="stylesheet" href="admin-styles.css">
+</head>
+<body>
+    <!-- 헤더 -->
+    <header class="admin-header">
+        <div class="header-left">
+            <h1>⚙️ Ashop 관리자</h1>
+            <div id="admin-info"></div>
+        </div>
+        <div class="header-right">
+            <a href="https://yourname.github.io/ashop/" class="btn btn-home">🏠 홈</a>
+            <button id="logout-btn" class="btn btn-logout">로그아웃</button>
+        </div>
+    </header>
+    
+    <!-- 인증 체크 메시지 -->
+    <div id="auth-message" class="auth-message">
+        <p>관리자 권한을 확인하는 중...</p>
+    </div>
+    
+    <!-- 메인 콘텐츠 (인증 성공 시 표시) -->
+    <main id="admin-main" class="admin-main" style="display: none;">
+        <!-- 통계 카드 -->
+        <div class="stats-container">
+            <div class="stat-card">
+                <h3>전체 회원</h3>
+                <p id="total-users" class="stat-number">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>활성 회원</h3>
+                <p id="active-users" class="stat-number">0</p>
+            </div>
+            <div class="stat-card">
+                <h3>총 포인트</h3>
+                <p id="total-points" class="stat-number">0</p>
+            </div>
+        </div>
+        
+        <!-- 제어판 -->
+        <div class="control-panel">
+            <button id="refresh-btn" class="btn btn-primary">🔄 새로고침</button>
+            <button id="export-excel-btn" class="btn btn-success">📊 Excel 다운로드</button>
+        </div>
+        
+        <!-- 회원 테이블 -->
+        <div class="table-container">
+            <h2>회원 목록</h2>
+            <table class="users-table">
+                <thead>
+                    <tr>
+                        <th>이름</th>
+                        <th>이메일</th>
+                        <th>전화번호</th>
+                        <th>등급</th>
+                        <th>포인트</th>
+                        <th>상태</th>
+                        <th>가입일</th>
+                    </tr>
+                </thead>
+                <tbody id="users-table-body">
+                    <!-- JavaScript로 채워짐 -->
+                </tbody>
+            </table>
+        </div>
+    </main>
+    
+    <!-- 페이지 초기화 -->
+    <script>
+    // 페이지 로드 후 모듈 초기화
+    document.addEventListener('DOMContentLoaded', () => {
+        console.log('Admin 페이지 로드 완료');
+        
+        // 이벤트 리스너 설정
+        document.getElementById('refresh-btn')?.addEventListener('click', () => {
+            window.userManager?.loadUsers();
+        });
+        
+        document.getElementById('export-excel-btn')?.addEventListener('click', () => {
+            window.excelExporter?.exportToExcel();
+        });
+        
+        document.getElementById('logout-btn')?.addEventListener('click', () => {
+            window.authManager?.logout();
+        });
+    });
+    </script>
+</body>
+</html>
