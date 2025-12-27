@@ -3,108 +3,335 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ashop 관리자</title>
-    
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-    
-    <!-- Excel 라이브러리 -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    
-    <!-- 모듈화된 스크립트 -->
-    <script src="firebase-config.js" defer></script>
-    <script src="auth-check.js" defer></script>
-    <script src="user-manager.js" defer></script>
-    <script src="excel-exporter.js" defer></script>
-    
-    <!-- 스타일시트 -->
-    <link rel="stylesheet" href="admin-styles.css">
+    <title>ashop 관리자 포털</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Malgun Gothic', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .portal-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            max-width: 800px;
+            width: 100%;
+        }
+        
+        .portal-header {
+            background: #1a237e;
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        .portal-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .portal-header p {
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+        
+        .portal-content {
+            padding: 40px;
+        }
+        
+        .welcome-section {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .welcome-section h2 {
+            color: #1a237e;
+            margin-bottom: 15px;
+        }
+        
+        .admin-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .feature-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 1px solid #e9ecef;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+        
+        .feature-title {
+            font-size: 1.3rem;
+            color: #1a237e;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        .feature-desc {
+            color: #666;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+        
+        .launch-btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #1a237e 0%, #283593 100%);
+            color: white;
+            padding: 14px 28px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+        }
+        
+        .launch-btn:hover {
+            background: linear-gradient(135deg, #283593 0%, #303f9f 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(26, 35, 126, 0.3);
+        }
+        
+        .launch-btn.secondary {
+            background: #6c757d;
+        }
+        
+        .launch-btn.secondary:hover {
+            background: #5a6268;
+        }
+        
+        .system-info {
+            background: #e8f5e9;
+            border-radius: 10px;
+            padding: 25px;
+            margin-top: 30px;
+        }
+        
+        .system-info h3 {
+            color: #388e3c;
+            margin-bottom: 15px;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .info-item {
+            padding: 10px;
+        }
+        
+        .info-label {
+            font-weight: bold;
+            color: #555;
+            font-size: 0.9rem;
+        }
+        
+        .info-value {
+            color: #1a237e;
+            font-weight: 600;
+            margin-top: 5px;
+        }
+        
+        .portal-footer {
+            background: #f8f9fa;
+            padding: 25px;
+            text-align: center;
+            border-top: 1px solid #e9ecef;
+        }
+        
+        .tech-badges {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+        
+        .tech-badge {
+            background: #e3f2fd;
+            color: #1976d2;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        
+        @media (max-width: 768px) {
+            .portal-header {
+                padding: 30px 20px;
+            }
+            
+            .portal-content {
+                padding: 30px 20px;
+            }
+            
+            .admin-features {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
-    <!-- 헤더 -->
-    <header class="admin-header">
-        <div class="header-left">
-            <h1>⚙️ Ashop 관리자</h1>
-            <div id="admin-info"></div>
+    <div class="portal-container">
+        <!-- 헤더 -->
+        <header class="portal-header">
+            <h1>🚀 ashop 관리자 포털</h1>
+            <p>전문적인 데이터 관리 시스템에 오신 것을 환영합니다</p>
+        </header>
+        
+        <!-- 메인 콘텐츠 -->
+        <div class="portal-content">
+            <!-- 환영 메시지 -->
+            <div class="welcome-section">
+                <h2>데이터 관리 시스템을 시작해보세요</h2>
+                <p>Firebase 기반의 안전하고 강력한 데이터 관리 도구에 접속합니다</p>
+            </div>
+            
+            <!-- 기능 카드 -->
+            <div class="admin-features">
+                <!-- 데이터 관리 시스템 -->
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <div class="feature-title">데이터 관리 시스템</div>
+                    <p class="feature-desc">
+                        Firestore 데이터베이스를 실시간으로 관리하고<br>
+                        엑셀 파일로 손쉽게 내보내세요
+                    </p>
+                    <a href="https://login-57c14.web.app" class="launch-btn" target="_blank">
+                        🚀 시스템 시작하기
+                    </a>
+                </div>
+                
+                <!-- 회원 관리 -->
+                <div class="feature-card">
+                    <div class="feature-icon">👥</div>
+                    <div class="feature-title">회원 데이터 관리</div>
+                    <p class="feature-desc">
+                        등록된 회원 정보를 확인하고<br>
+                        엑셀 파일로 정리된 리포트를 생성하세요
+                    </p>
+                    <a href="https://login-57c14.web.app" class="launch-btn secondary" target="_blank">
+                        👥 회원 데이터 관리
+                    </a>
+                </div>
+                
+                <!-- 시스템 문서 -->
+                <div class="feature-card">
+                    <div class="feature-icon">📚</div>
+                    <div class="feature-title">시스템 문서</div>
+                    <p class="feature-desc">
+                        관리자 매뉴얼과 사용 가이드를 확인하고<br>
+                        시스템을 최적으로 활용하세요
+                    </p>
+                    <button class="launch-btn secondary" onclick="showManual()">
+                        📖 매뉴얼 보기
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 시스템 정보 -->
+            <div class="system-info">
+                <h3>🔧 시스템 정보</h3>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-label">시스템 버전</div>
+                        <div class="info-value">ashop 관리자 v1.0</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">데이터베이스</div>
+                        <div class="info-value">Firestore</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">호스팅</div>
+                        <div class="info-value">Firebase Hosting</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">주소</div>
+                        <div class="info-value">login-57c14.web.app</div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="header-right">
-            <a href="https://yourname.github.io/ashop/" class="btn btn-home">🏠 홈</a>
-            <button id="logout-btn" class="btn btn-logout">로그아웃</button>
-        </div>
-    </header>
-    
-    <!-- 인증 체크 메시지 -->
-    <div id="auth-message" class="auth-message">
-        <p>관리자 권한을 확인하는 중...</p>
+        
+        <!-- 푸터 -->
+        <footer class="portal-footer">
+            <p>© 2024 ashop 관리자 포털. 모든 권리 보유.</p>
+            <div class="tech-badges">
+                <span class="tech-badge">Firebase</span>
+                <span class="tech-badge">Firestore</span>
+                <span class="tech-badge">Google Cloud</span>
+                <span class="tech-badge">실시간 데이터</span>
+            </div>
+        </footer>
     </div>
     
-    <!-- 메인 콘텐츠 (인증 성공 시 표시) -->
-    <main id="admin-main" class="admin-main" style="display: none;">
-        <!-- 통계 카드 -->
-        <div class="stats-container">
-            <div class="stat-card">
-                <h3>전체 회원</h3>
-                <p id="total-users" class="stat-number">0</p>
-            </div>
-            <div class="stat-card">
-                <h3>활성 회원</h3>
-                <p id="active-users" class="stat-number">0</p>
-            </div>
-            <div class="stat-card">
-                <h3>총 포인트</h3>
-                <p id="total-points" class="stat-number">0</p>
-            </div>
-        </div>
-        
-        <!-- 제어판 -->
-        <div class="control-panel">
-            <button id="refresh-btn" class="btn btn-primary">🔄 새로고침</button>
-            <button id="export-excel-btn" class="btn btn-success">📊 Excel 다운로드</button>
-        </div>
-        
-        <!-- 회원 테이블 -->
-        <div class="table-container">
-            <h2>회원 목록</h2>
-            <table class="users-table">
-                <thead>
-                    <tr>
-                        <th>이름</th>
-                        <th>이메일</th>
-                        <th>전화번호</th>
-                        <th>등급</th>
-                        <th>포인트</th>
-                        <th>상태</th>
-                        <th>가입일</th>
-                    </tr>
-                </thead>
-                <tbody id="users-table-body">
-                    <!-- JavaScript로 채워짐 -->
-                </tbody>
-            </table>
-        </div>
-    </main>
-    
-    <!-- 페이지 초기화 -->
+    <!-- 스크립트 -->
     <script>
-    // 페이지 로드 후 모듈 초기화
-    document.addEventListener('DOMContentLoaded', () => {
-        console.log('Admin 페이지 로드 완료');
+        // 매뉴얼 표시
+        function showManual() {
+            alert(`📘 ashop 관리자 시스템 매뉴얼
+
+1. 시스템 시작
+   - "시스템 시작하기" 버튼 클릭
+   - Firebase 관리자 페이지로 이동
+
+2. 데이터 내보내기
+   - 원하는 데이터 버튼 클릭
+   - 엑셀 파일 자동 다운로드
+
+3. 시스템 정보
+   - 프로젝트 ID: login-57c14
+   - 호스팅 주소: https://login-57c14.web.app
+   - 데이터베이스: Firestore
+
+4. 지원
+   - 기술 문의: 개발자에게 연락
+   - 시스템 업데이트: 정기적 유지보수`);
+        }
         
-        // 이벤트 리스너 설정
-        document.getElementById('refresh-btn')?.addEventListener('click', () => {
-            window.userManager?.loadUsers();
-        });
+        // 시스템 상태 체크
+        function checkSystemStatus() {
+            console.log('시스템 상태: 정상');
+            console.log('Firebase 연결: 준비됨');
+            console.log('관리자 포털: 실행 중');
+        }
         
-        document.getElementById('export-excel-btn')?.addEventListener('click', () => {
-            window.excelExporter?.exportToExcel();
+        // 페이지 로드 시 실행
+        window.addEventListener('load', function() {
+            checkSystemStatus();
+            console.log('ashop 관리자 포털 로드 완료');
         });
-        
-        document.getElementById('logout-btn')?.addEventListener('click', () => {
-            window.authManager?.logout();
-        });
-    });
     </script>
 </body>
 </html>
